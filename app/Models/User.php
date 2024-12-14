@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Reservation;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        "isAdmin"
     ];
 
     /**
@@ -45,5 +47,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function reservation(){
+        return $this->hasMany(Reservation::class);
     }
 }

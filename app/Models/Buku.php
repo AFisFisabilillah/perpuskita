@@ -10,4 +10,6 @@ class Buku extends Model
     protected $table = 'Buku';
     use HasFactory;
     protected $guarded = ['id'];
+
+    protected $filable = ['judul', 'sinopsis', 'penulis','tahun_terbit','penerbit','status'];
 }

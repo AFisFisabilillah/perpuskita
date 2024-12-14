@@ -15,12 +15,12 @@ return new class extends Migration
     {
        Schema::create('Buku', function (Blueprint $table) {
            $table->bigIncrements('id');
-           $table->string("judul");
+           $table->string("judul")->fulltext("fultext_judul");
            $table->text("sinopsis")->nullable();
            $table->string('penulis');
            $table->date('tahun_terbit');
            $table->string('penerbit');
-           $table->boolean('status')->default(true);
+           $table->enum('status',["reservasi", "pinjam","tersedia"])->default("tersedia");
            $table->timestamps();
        });
     }

@@ -14,15 +14,6 @@ class BukuCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return ["Buku" => $this->collection->map(function ($buku) {
-            return [
-                'judul' => $buku->judul,
-                'sinopsis' => $buku->sinopsis,
-                'penulis' => $buku->penulis,
-                'tahun_penerbit' => $buku->tahun_penerbit,
-                'penerbit' => $buku->penulis,
-                'status' => $buku->status
-            ];
-        })];
+        return parent::toArray($request);
     }
 }

@@ -53,4 +53,7 @@ class LoginController extends Controller
         return new AuthResource(true, "succes for login", $user->createToken('authToken')->plainTextToken);
     }
 
+   
+    
+
 }
