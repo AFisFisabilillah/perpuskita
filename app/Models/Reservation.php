@@ -13,6 +13,8 @@ class Reservation extends Model
     protected $fillable = ["user_id", "buku_id","waktu_reservasi","waktu_ambil","status"];
     public $timestamps = false;
 
+    
+
     public function user(){
         return $this->belongsTo(User::class, "user_id",'id' );
     }

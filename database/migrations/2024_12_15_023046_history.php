@@ -11,21 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reservations', function (Blueprint $table) {
+        Schema::create('histories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId("user_id")->constrained(
-                table: "users", column: "id"
-            );
+            $table->foreignId("user_id")->constrained("users", "id");
             $table->foreignId("buku_id")->constrained("buku", "id");
-            $table->timestamp("waktu_reservasi");
-            $table->date("waktu_ambil");
-            $table->enum("status", ['pending', 'dipinjam','selesai'])->default("pending");
+            $table->date("waktu_pinjam"); 
+            $table->date("waktu_kembali");
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+   
     public function down(): void
     {
         //

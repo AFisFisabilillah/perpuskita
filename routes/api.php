@@ -19,7 +19,10 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/profile', [UserController::class,'profile']);
     Route::get('/logout', [LoginController::class, 'logout']);
     //reservasi
-    Route::post('/reservasi', [ReservationController::class, 'reservation']);
+    Route::post('/reservasi/add', [ReservationController::class, 'reservation']);
+    Route::delete("/reservasi/delete/{id}", [ReservationController::class, 'delete'] );
+    Route::get('/reservasi', [UserController::class, 'userReservasi']);
+
 });
 
 Route::middleware(["admin", "auth:sanctum"])->group(function(){
@@ -28,6 +31,10 @@ Route::middleware(["admin", "auth:sanctum"])->group(function(){
     Route::delete("/admin/buku/delete/{id}", [BukuController::class, "destroy"]);
 
     Route::get("/admin/buku/search", [BukuController::class, "search"]);
+    //reservasi
+    Route::get("/admin/reservasi", [ReservationController::class, 'show']);
+    Route::patch("/admin/reservasi/accept/{reservasi}", [ReservationController::class, "reservasiAccept"]);
+    Route::patch("/admin/reservasi/finish/{reservation}", [ReservationController::class, "reservasiFinish"]);
 });
 
 

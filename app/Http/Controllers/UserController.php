@@ -73,4 +73,15 @@ class UserController extends Controller
             "data" => [$user]
         ], 200);
     }
+
+    public function userReservasi()
+    {
+        $reservationUser = request()->user()->reservation;
+        return response()->json([
+            "status" => true,
+            "message" => "reservasi milik ".request()->user()->name,
+            "total" => $reservationUser->count(),
+            "data" => $reservationUser
+        ]);
+    }
 }
