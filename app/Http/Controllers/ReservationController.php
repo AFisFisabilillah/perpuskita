@@ -7,6 +7,10 @@ use App\Models\History;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class ReservationController extends Controller
 {
@@ -14,7 +18,11 @@ class ReservationController extends Controller
     {
         $validasiReservation =  $request->validate([
             "buku_id" => ["required", "exists:buku,id"],
-            "waktu_ambil" => ["required", "date"]
+            "waktu_ambil" => ["required", "date","after_or_equal:today",'before_or_equal:' . now()->addWeeks(2)->format('Y-m-d')],
+            'waktu_kembali' => ['required']
+        ],[
+            "waktu_ambil.after_or_equal"=>"maaf tanggal tidak boleh melewati sekarang",
+            "waktu_ambil.before_or_equal"=> "maaf waktu ambil tidak boleh lebih dari dua minggu"
         ]);
         //mengambil dari user yang sedang login
         $validasiReservation['user_id'] = $request->user()->id;
@@ -44,7 +52,7 @@ class ReservationController extends Controller
                 'waktu_reservasi' => $reservasi->waktu_reservasi,
                 'status' => $reservasi->status
             ]
-        ]);
+        ],200);
     }
     public function delete(string $id)
     {
@@ -117,10 +125,8 @@ class ReservationController extends Controller
             ]);
         }
 
-        //mengubah status di pinjam menjadi selesai 
-        $reservation->update([
-            "status" => "selesai"
-        ]);
+         
+        
 
         //mengubah status buku menjadi tersedia
         $reservation->buku->update([
@@ -145,6 +151,7 @@ class ReservationController extends Controller
             "waktu_pinjam" => $reservation->waktu_reservasi,
             "waktu_kembali" => Carbon::now()
         ]);
+        $reservation->delete();
 
         return  response()->json([
             "status" => true,
@@ -157,11 +164,28 @@ class ReservationController extends Controller
 
     public function show()
     {
+        
+        
+
+        $reservasi = Reservation::with(['buku:id,judul', 'user:id,name,image'])
+        ->select('id', 'waktu_ambil', 'waktu_kembali', 'status', 'buku_id', 'user_id')
+        ->get();
+        
+        return response()->json([
+            "status" => true,
+            "message" => "ini adalah semua reservasi",
+            "total" => $reservasi->count(),
+            "data" => $reservasi
+        ], 200);
+        
+        
+
+        
         return response()->json([
             "status" => true,
             "message" => "ini adlah semua reservasi",
-            "total" => Reservation::count(),
-            "data" => Reservation::all()
+            "total" => $reservasi->count(),
+            "data" => $reservasi
         ], 200);
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Buku;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\BukuResource;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\BukuCollection;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Resources\BukuDetailResource;
@@ -15,11 +16,11 @@ class BukuController extends Controller
     
     public function index()
     {
-
+       
       return response()->json([
         "status" => true,
         "messege" => "all data book",
-        "data" => [Buku::all()]
+        "data" => Buku::all()
       ]) ;
     // return response()->json(Buku::all());
     }
@@ -59,8 +60,9 @@ class BukuController extends Controller
             "judul" => "required|string",
             "sinopsis" => "required|string",
             "penulis" => "required|string",
-            "tahun_terbit" => "date|required",
-            "penerbit" => "required|string"
+            "tahun_terbit" => "date|required|before_or_equal:" . now()->addWeeks(2)->format('Y-m-d'),
+            "penerbit" => "required|string",
+            "image" => "string"
         ]);
 
         $buku = Buku::create($buku);
@@ -92,7 +94,8 @@ class BukuController extends Controller
             "sinopsis" => "required|string",
             "penulis" => "required|string",
             "tahun_terbit" => "date|required",
-            "penerbit" => "required|string"
+            "penerbit" => "required|string",
+            'image' => 'string'
         ]);
 
         $buku = Buku::findOrFail($id);
@@ -125,12 +128,14 @@ class BukuController extends Controller
                 "message" => "not found id buku",
                 "data" => []
             ]);
+        }else{
+            $buku->delete();
+            return response()->json([
+                "status"=>true,
+                "message" => "Bku berhasil di hapus"
+            ]);
         }
-        $buku->delete();
-        return response()->json([
-            "status"=>true,
-            "message" => "Bku berhasil di hapus"
-        ]);
+       
     }
 
     

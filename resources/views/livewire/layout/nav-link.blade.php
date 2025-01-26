@@ -1,0 +1,1 @@
+<a href="{{route($nama) }} " class=" {{ $active ? 'md:text-blue-700 block py-2 px-3 md:p-0 rounded  bg-blue-700 md:bg-transparent text-white  ' : "block py-2 px-3 md:p-0 text-white  rounded md:bg-transparent md:text-white md:dark:text-blue-500 hover:bg-blue-400" }}  " aria-current="page">{{ $nama }}</a>   

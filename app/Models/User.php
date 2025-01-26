@@ -4,12 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Reservation;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -20,8 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        "isAdmin"
+        "isAdmin",
+        "image"
     ];
+
+    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,4 +56,10 @@ class User extends Authenticatable
     public function reservation(){
         return $this->hasMany(Reservation::class);
     }
+
+    public function history(){
+        return $this->hasMany(History::class);
+    }
+
+   
 }

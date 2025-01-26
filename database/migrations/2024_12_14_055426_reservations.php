@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId("buku_id")->constrained("buku", "id");
             $table->timestamp("waktu_reservasi");
             $table->date("waktu_ambil");
+            $table->date("waktu_kembali");
             $table->enum("status", ['pending', 'dipinjam','selesai'])->default("pending");
         });
     }

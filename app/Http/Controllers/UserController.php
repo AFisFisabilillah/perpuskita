@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Buku;
+use App\Models\History;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
     public function profile()
     {
+        if(!cache()->has("profile_key")){
+            $cache = Cache::remember('profile_key', 10, function () {
+                return Auth::user();
+            });;
+        }
+       
+
         return response()->json(Auth::user());
     }
     public function store(Request $request)
@@ -76,12 +86,56 @@ class UserController extends Controller
 
     public function userReservasi()
     {
-        $reservationUser = request()->user()->reservation;
+        // Cek apakah data reservasi sudah ada di cache
+        $reservasiFinal = Cache::remember('user_' . Auth::id() . '_reservasi', 1, function () {
+            // Mengambil data reservasi dengan relasi buku
+            $reservasi = Auth::user()->reservation()->with('buku')->get();
+
+            return $reservasi->map(function ($item) {
+                $item->judul_buku = $item->buku->judul; // Menambahkan judul buku
+                $item->image = $item->buku->image;
+                unset($item->buku); // Menghapus relasi buku yang tidak diperlukan
+                return $item;
+            });
+        });
+
+        
+
         return response()->json([
             "status" => true,
-            "message" => "reservasi milik ".request()->user()->name,
-            "total" => $reservationUser->count(),
-            "data" => $reservationUser
+            "name" => Auth::user()->name,
+            "image" => Auth::user()->image,
+            "email" => Auth::user()->email,
+            "message" => "reservasi milik " . request()->user()->name,
+            "total" => $reservasiFinal->count(),
+            "data" => $reservasiFinal
         ]);
     }
+
+    public function historyUser(){
+        $history =  History::with("user:id,name","buku:id,judul,image")->where("user_id", Auth::id())->get();
+        if(!$history){
+            return response()->json([
+                'status'=> false,
+                'message'=>"maaf kamu belum perah meminjam nuku"
+            ], 404);
+        }
+        return response()->json([
+            'status' => true,
+            "message"=>"ini adalah history bukuyang pernah kamu pinjam",
+            "data" => $history
+        ]);
+    }
+
+    public function uploadProfile(Request $request){
+        $filename = $request->only("image");
+        $user = User::where("id",Auth::id())->update([
+            "image" => $filename['image']
+        ]);
+       return response()->json([
+        "message" => "berhasil menambahkan gambar" 
+       ]);
+    }
+
+   
 }

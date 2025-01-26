@@ -22,8 +22,11 @@ class BukuDetailResource extends JsonResource
             'judul'=> $this->judul,
             'sinopsis' => $this->sinopsis,
             'penulis' => $this->penulis,
-            'tahun_penerbit' => $this->tahun_penerbit,
+            'tahun_terbit' => $this->tahun_terbit,
+            'status' => $this->resource->status,
             'penerbit' => $this->penerbit,
+            'image' => $this->image
+
         ];
     }
 
